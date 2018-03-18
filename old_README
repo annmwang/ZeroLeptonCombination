@@ -1,0 +1,95 @@
+Developed by Shunsuke Adachi (shunsuke.adachi@cern.ch)
+
+Requirement: 00-00-53 or later HistFitter
+(if you use 00-00-52 or former, please install and run setup.sh in it after run mysetup.sh for ZeroLeptonFitter. )
+
+
+=========================================
+make cotour plots for meff-based analysis
+=========================================
+
+all you have to do (command) : 
+1. check "INPUTDIR" in makeConturs_Run2.py (explain it in Input & Output )
+2. remove results.cache if it exists and you want to run from the first step.
+    (it remembers input files when contours were made before. )
+3. $ source run_contourplot.sh @ ZeroLeptonFitter/macros/contourplot/
+
+** Input & Output **
+Input  : results in ${INPUTDIR}/ 
+  ( ${INPUTDIR} is defined in makeContours_Run2.py )
+Output : 
+  - ./Outputs/${LUMI}/[SignalGridName]/
+      Outputs of makeContours_Run2.py in run_contourplot.sh
+      - fit result in each signal grid and in each SR.
+       output name ex.) GG_direct_SR2j-0800_fixSigXSecNominal...
+      - fit result in each signal grid with the best SR.
+       output name ex.) GG_direct_combined_fixSigXSecNominal...
+  - ./plots/
+      Outputs of makecontourplots_CLs.C (Final limit plots)
+  - ./[SignalGridName]_contours.root
+      Outputs (limit plots/root file of limit TH2F&TGraph) of makecontours_CLs.C in run_contourplot.sh
+    ( ${LUMI} is defined in run_contourplot.sh )
+    ( [SignalGridName]is input argument(--grid) of makeContours_Run2.py in run_contourplot.sh )
+    
+** What it does **
+There are 2 steps :
+1. makeContours_Run2.py
+  - MergeFiles :
+      merging output of ZeroLeptonFitter exclusion fits (Please see README of ZeroLeptonFitter.)
+  - MakeContours :
+      make txt file / json file / root file of contour TH2s
+  - Oring :
+      search the best significance SR in each point & make files for the combined best SRs.
+
+2. makecontours_CLs.C
+  - make final limit plot from output of makeContours_Run2.py 
+    (input : root file of contours with the combined best SRs.)
+      - Actually, it runs contourmacros/SUSY_contourplots.C
+      - Use smoothing function of TH2  if doSmooth is true in SUSY_contourplots.C.
+        to avoid zig-zag line.
+
+
+=============================================================
+make combined cotour plots of meff-based and RJigsaw analyses
+=============================================================
+
+* The following macros have not been guaranteed to run yet.
+
+all you have to do (command) : 
+1. $ source setup.sh (ZeroLeptonFitter setup & SFT setup)
+2. check input paths in myCombineHarvest.py
+3. $ source run_contourplot_combine.sh
+
+** Input & Output **
+Input  :  
+  - results of "Oring" in each analyses.
+    - ${GRID}_combined_fixSigXSecNominal(Up/Down)...list (harvest list file) for each of the analyses
+    - summary_harvest_tree_description.py for each of the analyses
+Output : 
+  - ./${GRID}_MEffRJRCombined_fixSigXSecNominal(Up/Down)...
+      combined result files
+  - ./summary_harvest_tree_description_MEffRJRCombine.h/.py/.pyc
+      tree description for combined result
+  - ./plots_combine/
+      Outputs of makecontourplots_CLs_combine.C (Final combined limit plots)
+ 
+** What it does **
+There are 3 steps :
+1. myCombineHarvest.py
+  - select the best analysis from the 2 analyses in terms of CLsexp.
+  - input & output is harvest list file (ending with "list")
+  - index of each SR is changed here
+    (these indices are retrieved from "${GRID}_combined_fixSigXSec...list_infoFile" for each of the analyses
+    - MEff analysis    : the same as in before.
+    - RJigsaw analysis : original index + 100
+
+2. myHarvestToContours.py
+  - converted from combined harvest list file to TGraph contours.
+  - interpolating by using scipy.interpolate (which needs setup of SFT)
+
+3. makecontourplots_CLs_combine.C
+  - make final combined limit plot from TGraph output of step 2.
+  - Actually, it runs contourmacros/SUSY_contourplots.C with useTGraph=true.
+  - it doesn't use smoothing since smooting (interpolating) has done in step 2.
+
+  
