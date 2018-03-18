@@ -36,6 +36,14 @@ For both up/down errors:
 python myCombineHarvestErrors.py 
 ```
 
-* open run
+* open run_contourplot_combine.sh
 * change signal region to be the desired signal (e.g., GG)
+```{r, engine='bash', count_lines}
+source run_contourplot_combine.sh
+```
 
+* Follow a similar procedure for the onestep regions, where we have 
+   * myCombineHarvestOnestep.py
+   * myCombineHarvestOnestepErrors.py
+   * run_contourplot_combine_onestep.sh
+   
