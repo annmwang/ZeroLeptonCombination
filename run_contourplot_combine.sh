@@ -21,7 +21,7 @@ LUMI=36.1ifb
 cp -v summary_harvest_tree_description_MEffRJRCombine.py summary_harvest_tree_description.py
 cp -v summary_harvest_tree_description_MEffRJRCombine.h summary_harvest_tree_description.h
 
-mv ${GRID}_direct_MEffRJRCombined_fixSigXSecNominal__1_harvest_list Direct/Combined/
+cp ${GRID}_direct_MEffRJRCombined_fixSigXSecNominal__1_harvest_list Direct/Combined/
 mv ${GRID}_direct_MEffRJRCombined_fixSigXSecUp__1_harvest_list Direct/Combined/
 mv ${GRID}_direct_MEffRJRCombined_fixSigXSecDown__1_harvest_list Direct/Combined/
 
